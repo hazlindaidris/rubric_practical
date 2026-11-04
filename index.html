@@ -3,662 +3,1065 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Rubrik — Measurement & Instrumentation</title>
+<title>Dashboard Rubric for Measurement and Instrumentation</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.6; background: #f0f4f8; color: #1f2328; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.6; background: #f0f4f8; color: #1f2328; display: flex; flex-direction: column; min-height: 100vh; }
 
-  /* HEADER */
-  .site-header { background: #1F4E79; color: #fff; padding: 18px 28px; }
-  .site-header h1 { font-size: 20px; font-weight: 700; }
-  .site-header p { font-size: 13px; color: #a8c8e8; margin-top: 2px; }
+/* TOPBAR */
+.topbar { background: #1F4E79; color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; }
+.topbar h1 { font-size: 16px; font-weight: 700; flex: 1; }
+.topbar .kelas-info { font-size: 12px; color: #a8c8e8; }
 
-  /* TABS */
-  .tabs { display: flex; background: #1a3f63; border-bottom: 2px solid #2E75B6; overflow-x: auto; }
-  .tab-btn { padding: 10px 20px; border: none; background: none; color: #a8c8e8; cursor: pointer; font-size: 13px; font-weight: 600; white-space: nowrap; transition: background 0.15s, color 0.15s; }
-  .tab-btn:hover { background: #2E75B6; color: #fff; }
-  .tab-btn.active { background: #2E75B6; color: #fff; border-bottom: 3px solid #90CAF9; }
+/* LAYOUT */
+.layout { display: flex; flex: 1; }
 
-  /* PANELS */
-  .panel { display: none; padding: 24px 28px; }
-  .panel.active { display: block; }
+/* SIDEBAR */
+.sidebar { width: 240px; min-width: 240px; background: linear-gradient(180deg, #0f2d4a 0%, #1a3f63 100%); display: flex; flex-direction: column; padding: 0; position: sticky; top: 48px; height: calc(100vh - 48px); overflow-y: auto; box-shadow: 2px 0 8px rgba(0,0,0,0.18); }
+.sidebar-brand { padding: 18px 20px 14px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.sidebar-brand .brand-title { font-size: 13px; font-weight: 800; color: #fff; letter-spacing: 0.3px; line-height: 1.3; }
+.sidebar-brand .brand-sub { font-size: 10px; color: #5a8ab5; margin-top: 2px; }
+.sidebar-section { padding: 14px 0 4px; }
+.sidebar .nav-label { font-size: 9px; font-weight: 800; color: #3d6a96; text-transform: uppercase; letter-spacing: 1.5px; padding: 0 20px 6px; }
+.nav-btn { display: flex; align-items: center; gap: 10px; padding: 9px 20px; border: none; background: none; color: #8ab4d4; cursor: pointer; font-size: 13px; text-align: left; width: 100%; transition: all 0.15s; border-left: 3px solid transparent; border-radius: 0; }
+.nav-btn:hover { background: rgba(46,117,182,0.25); color: #fff; border-left-color: rgba(144,202,249,0.4); }
+.nav-btn.active { background: rgba(46,117,182,0.45); color: #fff; border-left-color: #90CAF9; font-weight: 700; }
+.nav-btn .icon { font-size: 15px; width: 22px; text-align: center; opacity: 0.85; }
+.nav-btn.active .icon { opacity: 1; }
+.nav-btn .nav-text { flex: 1; }
+.nav-btn .badge-done { background: #22c55e; color: #fff; font-size: 9px; font-weight: 800; border-radius: 10px; padding: 1px 7px; }
+.nav-btn .badge-pend { background: #f59e0b; color: #fff; font-size: 9px; font-weight: 800; border-radius: 10px; padding: 1px 7px; }
+.sidebar-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 6px 16px; }
 
-  /* CARDS */
-  .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-  .card h2 { font-size: 15px; font-weight: 700; color: #1F4E79; margin-bottom: 12px; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; }
-  .card h3 { font-size: 13px; font-weight: 700; color: #375623; margin: 14px 0 8px; }
+/* CONTENT */
+.content { flex: 1; padding: 24px 28px; overflow-y: auto; }
 
-  /* WEIGHTAGE BADGES */
-  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-  .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
-  .badge-pw   { background: #DBEAFE; color: #1E40AF; }
-  .badge-test { background: #D1FAE5; color: #065F46; }
-  .badge-mp   { background: #EDE9FE; color: #5B21B6; }
-  .badge-gs   { background: #FEF3C7; color: #92400E; }
-  .badge-total{ background: #FEE2E2; color: #991B1B; }
+/* CARDS */
+.card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+.card-title { font-size: 16px; font-weight: 700; color: #1F4E79; margin-bottom: 4px; }
+.card-subtitle { font-size: 12px; color: #57606a; margin-bottom: 16px; }
 
-  /* RUBRIK TABLE */
-  .rubrik-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .rubrik-table th { background: #1F4E79; color: #fff; padding: 7px 10px; text-align: center; font-weight: 600; }
-  .rubrik-table td { padding: 6px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
-  .rubrik-table tr:nth-child(even) td { background: #f7f8fa; }
-  .rubrik-table .w-col { background: #FEF3C7; color: #92400E; font-weight: 700; text-align: center; }
-  .rubrik-table .kriteria-col { font-weight: 600; color: #1F4E79; width: 30%; }
+/* FORM FIELDS */
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.form-field { display: flex; flex-direction: column; gap: 4px; }
+.form-field label { font-size: 11px; font-weight: 700; color: #57606a; text-transform: uppercase; }
+.form-field input, .form-field select { padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; }
+.form-field input:focus, .form-field select:focus { outline: none; border-color: #2E75B6; }
 
-  /* MAKLUMAT KELAS */
-  .kelas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
-  .kelas-field { display: flex; flex-direction: column; gap: 4px; }
-  .kelas-field label { font-size: 11px; font-weight: 700; color: #57606a; text-transform: uppercase; }
-  .kelas-field input { padding: 7px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; }
-  .kelas-field input:focus { outline: none; border-color: #2E75B6; }
+/* PELAJAR TABLE */
+.pelajar-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.pelajar-table th { background: #1F4E79; color: #fff; padding: 8px 10px; text-align: center; font-weight: 600; }
+.pelajar-table td { padding: 5px 8px; border: 1px solid #e5e7eb; }
+.pelajar-table tr:nth-child(even) td { background: #f7f8fa; }
+.pelajar-table td:first-child { text-align: center; color: #57606a; font-weight: 700; width: 44px; }
+.pelajar-table input { width: 100%; border: none; background: transparent; font-size: 13px; padding: 2px 4px; }
+.pelajar-table input:focus { outline: 1px solid #2E75B6; border-radius: 3px; background: #EFF6FF; }
+.pelajar-table .mono input { font-family: monospace; font-size: 12px; }
 
-  /* SENARAI MURID */
-  .murid-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .murid-table th { background: #1F4E79; color: #fff; padding: 8px 10px; text-align: center; font-weight: 600; }
-  .murid-table td { padding: 4px 8px; border: 1px solid #e5e7eb; }
-  .murid-table tr:nth-child(even) td { background: #f7f8fa; }
-  .murid-table td:first-child { text-align: center; color: #57606a; font-weight: 600; width: 40px; }
-  .murid-table input { width: 100%; border: none; background: transparent; font-size: 13px; padding: 2px 4px; }
-  .murid-table input:focus { outline: 1px solid #2E75B6; border-radius: 3px; background: #EFF6FF; }
-  .murid-table .no-pend input { font-family: monospace; font-size: 12px; }
-  .murid-btn-row { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-  .murid-btn { padding: 7px 18px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
-  .murid-btn-clear { background: #FEE2E2; color: #991B1B; }
-  .murid-btn-clear:hover { background: #FECACA; }
-  .murid-btn-save { background: #D1FAE5; color: #065F46; }
-  .murid-btn-save:hover { background: #A7F3D0; }
+/* MARKAH INPUT PAGE */
+.pilih-pelajar-bar { display: flex; align-items: center; gap: 12px; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; }
+.pilih-pelajar-bar label { font-size: 12px; font-weight: 700; color: #1E40AF; white-space: nowrap; }
+.pilih-pelajar-bar select { flex: 1; padding: 7px 10px; border: 1px solid #93C5FD; border-radius: 6px; font-size: 13px; font-weight: 600; }
+.pilih-pelajar-bar .nav-arrows { display: flex; gap: 6px; }
+.pilih-pelajar-bar .nav-arrows button { padding: 6px 12px; border: 1px solid #93C5FD; background: #fff; border-radius: 6px; cursor: pointer; font-size: 13px; color: #1E40AF; font-weight: 700; }
+.pilih-pelajar-bar .nav-arrows button:hover { background: #DBEAFE; }
 
-  /* KALKULATOR */
-  .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
-  .calc-section { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; }
-  .calc-section h3 { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
-  .calc-section.pw-sec   h3 { color: #1E40AF; }
-  .calc-section.test-sec h3 { color: #065F46; }
-  .calc-section.mp-sec   h3 { color: #5B21B6; }
-  .calc-section.gs-sec   h3 { color: #92400E; }
+/* KRITERIA RUBRIK */
+.rubrik-section { margin-bottom: 24px; }
+.rubrik-section h3 { font-size: 13px; font-weight: 700; color: #1F4E79; background: #DBEAFE; padding: 7px 12px; border-radius: 6px; margin-bottom: 10px; }
+.kriteria-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f3f4f6; }
+.kriteria-row:last-child { border-bottom: none; }
+.kriteria-label { flex: 1; font-size: 13px; color: #374151; }
+.kriteria-wt { font-size: 11px; color: #9ca3af; background: #f3f4f6; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+.kriteria-input { display: flex; align-items: center; gap: 6px; }
+.kriteria-input input[type=number] { width: 64px; padding: 5px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; font-weight: 700; text-align: center; color: #1F4E79; }
+.kriteria-input input[type=number]:focus { outline: none; border-color: #2E75B6; background: #EFF6FF; }
+.kriteria-input .max { font-size: 11px; color: #9ca3af; }
 
-  .input-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
-  .input-row label { font-size: 12px; color: #57606a; flex: 1; }
-  .input-row input[type=number] { width: 72px; padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px; text-align: center; }
-  .input-row input[type=number]:focus { outline: none; border-color: #2E75B6; }
-  .input-row .max-label { font-size: 11px; color: #9ca3af; width: 36px; text-align: right; }
+.subtotal-bar { display: flex; justify-content: space-between; align-items: center; background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 6px; padding: 10px 16px; margin-top: 12px; }
+.subtotal-bar .label { font-size: 12px; color: #0369A1; font-weight: 600; }
+.subtotal-bar .value { font-size: 18px; font-weight: 800; color: #1F4E79; }
 
-  .subtotal { background: #e0eaf5; border-radius: 4px; padding: 6px 10px; text-align: right; font-size: 13px; font-weight: 700; color: #1F4E79; margin-top: 8px; }
-  .subtotal span { font-size: 11px; font-weight: 400; color: #57606a; }
+/* SAVE ROW */
+.save-row { display: flex; gap: 10px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
+.btn { padding: 9px 22px; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; }
+.btn:hover { opacity: 0.85; }
+.btn-primary { background: #1F4E79; color: #fff; }
+.btn-success { background: #059669; color: #fff; }
+.btn-danger  { background: #DC2626; color: #fff; }
+.nav-btn-reset { color: #f87171 !important; }
+.nav-btn-reset:hover { background: rgba(220,38,38,0.2) !important; color: #fca5a5 !important; border-left-color: #f87171 !important; }
+.btn-outline { background: #fff; color: #1F4E79; border: 1px solid #1F4E79; }
+.status-saved { font-size: 12px; color: #059669; font-weight: 600; display: none; }
 
-  /* JUMLAH AKHIR */
-  .jumlah-box { background: #1F4E79; color: #fff; border-radius: 10px; padding: 20px 28px; text-align: center; margin-top: 20px; }
-  .jumlah-box .label { font-size: 13px; color: #a8c8e8; }
-  .jumlah-box .score { font-size: 48px; font-weight: 800; line-height: 1.1; }
-  .jumlah-box .grade { font-size: 16px; font-weight: 700; margin-top: 4px; }
-  .jumlah-box .breakdown { display: flex; justify-content: center; gap: 20px; margin-top: 14px; flex-wrap: wrap; }
-  .jumlah-box .bk-item { font-size: 12px; color: #a8c8e8; text-align: center; }
-  .jumlah-box .bk-item strong { display: block; font-size: 16px; color: #fff; }
+/* KEPUTUSAN */
+.summary-header { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat-box { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; text-align: center; }
+.stat-box .stat-label { font-size: 11px; color: #57606a; font-weight: 700; text-transform: uppercase; }
+.stat-box .stat-value { font-size: 26px; font-weight: 800; color: #1F4E79; line-height: 1.2; }
+.stat-box .stat-sub { font-size: 11px; color: #9ca3af; }
+.stat-box.lulus { border-color: #86EFAC; }
+.stat-box.lulus .stat-value { color: #15803D; }
+.stat-box.gagal { border-color: #FCA5A5; }
+.stat-box.gagal .stat-value { color: #DC2626; }
 
-  .reset-btn { display: block; margin: 12px auto 0; padding: 8px 24px; background: #2E75B6; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
-  .reset-btn:hover { background: #1a5a9c; }
+.keputusan-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.keputusan-table th { background: #1F4E79; color: #fff; padding: 9px 10px; text-align: center; font-weight: 600; position: sticky; top: 0; }
+.keputusan-table td { padding: 7px 10px; border: 1px solid #e5e7eb; text-align: center; }
+.keputusan-table tr:nth-child(even) td { background: #f7f8fa; }
+.keputusan-table .nama-col { text-align: left; font-weight: 600; }
+.keputusan-table .jumlah-col { font-size: 15px; font-weight: 800; }
+.badge-lulus { background: #D1FAE5; color: #065F46; padding: 3px 12px; border-radius: 12px; font-weight: 700; font-size: 12px; }
+.badge-gagal { background: #FEE2E2; color: #991B1B; padding: 3px 12px; border-radius: 12px; font-weight: 700; font-size: 12px; }
+.badge-gred  { padding: 3px 10px; border-radius: 12px; font-weight: 700; font-size: 12px; }
+.gred-a { background: #D1FAE5; color: #065F46; }
+.gred-b { background: #DBEAFE; color: #1E40AF; }
+.gred-c { background: #FEF3C7; color: #92400E; }
+.gred-d { background: #FED7AA; color: #9A3412; }
+.gred-e { background: #FEE2E2; color: #991B1B; }
+.gred-x { background: #F3F4F6; color: #6B7280; }
 
-  /* PANDUAN */
-  .formula-box { background: #1a3f63; color: #a8c8e8; border-radius: 8px; padding: 16px 20px; font-family: monospace; font-size: 13px; line-height: 2; }
-  .formula-box strong { color: #fff; }
-  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
-  .info-item { background: #f7f8fa; border-left: 4px solid #2E75B6; padding: 10px 14px; border-radius: 0 6px 6px 0; }
-  .info-item .title { font-size: 12px; color: #57606a; }
-  .info-item .value { font-size: 15px; font-weight: 700; color: #1F4E79; }
+/* PROGRESS BAR */
+.progress-wrap { background: #e5e7eb; border-radius: 4px; height: 8px; overflow: hidden; margin-top: 4px; }
+.progress-bar  { height: 8px; border-radius: 4px; background: #2E75B6; transition: width 0.3s; }
+.progress-bar.fail { background: #DC2626; }
 
-  /* GRADE SCALE */
-  .grade-scale { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-  .gs-item { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; }
-  .gs-a { background: #D1FAE5; color: #065F46; }
-  .gs-b { background: #DBEAFE; color: #1E40AF; }
-  .gs-c { background: #FEF3C7; color: #92400E; }
-  .gs-d { background: #FEE2E2; color: #991B1B; }
-  .gs-e { background: #f3f4f6; color: #374151; }
-
-  footer { text-align: center; font-size: 12px; color: #9ca3af; padding: 24px; border-top: 1px solid #e5e7eb; margin-top: 20px; }
+/* UTILITIES */
+.text-muted { color: #57606a; font-size: 12px; }
+.mt8 { margin-top: 8px; }
+.mt16 { margin-top: 16px; }
+.hidden { display: none !important; }
+footer { text-align: center; font-size: 12px; color: #9ca3af; padding: 16px; border-top: 1px solid #e5e7eb; background: #fff; }
 </style>
 </head>
 <body>
 
-<div class="site-header">
-  <h1>📐 Dashboard Rubrik — Measurement &amp; Instrumentation</h1>
-  <p>Template pemarkahan coursework | Boleh guna semula setiap semester</p>
+<!-- TOPBAR -->
+<div class="topbar">
+  <h1>📐 Dashboard Rubric for Measurement and Instrumentation</h1>
+  <span class="kelas-info" id="topbar-info">Measurement &amp; Instrumentation</span>
 </div>
 
-<div class="tabs">
-  <button class="tab-btn active" onclick="showTab('panduan')">📋 Panduan &amp; Rubrik</button>
-  <button class="tab-btn" onclick="showTab('kalkulator')">🧮 Kalkulator Markah</button>
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+
+    <div class="sidebar-brand">
+      <div class="brand-title">📐 Rubric Dashboard</div>
+      <div class="brand-sub">Measurement &amp; Instrumentation</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="nav-label">Persediaan</div>
+      <button class="nav-btn active" onclick="showPage('kelas')" id="nav-kelas">
+        <span class="icon">🏫</span><span class="nav-text">Maklumat Kelas</span>
+      </button>
+      <button class="nav-btn" onclick="showPage('pelajar')" id="nav-pelajar">
+        <span class="icon">👥</span><span class="nav-text">Senarai Pelajar</span>
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="nav-label">Isi Markah</div>
+      <button class="nav-btn" onclick="showPage('pw')" id="nav-pw">
+        <span class="icon">📁</span><span class="nav-text">Practical Work</span>
+      </button>
+      <button class="nav-btn" onclick="showPage('miniproject')" id="nav-miniproject">
+        <span class="icon">🏆</span><span class="nav-text">Mini Project</span>
+      </button>
+      <button class="nav-btn" onclick="showPage('test')" id="nav-test">
+        <span class="icon">📝</span><span class="nav-text">Test</span>
+      </button>
+      <button class="nav-btn" onclick="showPage('gs')" id="nav-gs">
+        <span class="icon">⭐</span><span class="nav-text">Generic Skills</span>
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="nav-label">Output</div>
+      <button class="nav-btn" onclick="showPage('keputusan')" id="nav-keputusan">
+        <span class="icon">📊</span><span class="nav-text">Keputusan</span>
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="nav-label">Sem Baru</div>
+      <button class="nav-btn nav-btn-reset" onclick="resetNamaPelajar()">
+        <span class="icon">👥</span><span class="nav-text">Reset Nama Pelajar</span>
+      </button>
+      <button class="nav-btn nav-btn-reset" onclick="resetSemua()">
+        <span class="icon">🗑️</span><span class="nav-text">Reset Semua Data</span>
+      </button>
+    </div>
+
+  </nav>
+
+  <!-- CONTENT AREA -->
+  <main class="content">
+
+    <!-- ===== PAGE: MAKLUMAT KELAS ===== -->
+    <div id="page-kelas" class="page">
+      <div class="card">
+        <div class="card-title">🏫 Maklumat Kelas</div>
+        <div class="card-subtitle">Isi maklumat asas kelas untuk sem ini.</div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Nama Pensyarah</label>
+            <input type="text" id="f-pensyarah" placeholder="En. Ahmad bin Ali">
+          </div>
+          <div class="form-field">
+            <label>Nama Kursus</label>
+            <input type="text" id="f-kursus" placeholder="Measurement &amp; Instrumentation">
+          </div>
+          <div class="form-field">
+            <label>Kelas</label>
+            <input type="text" id="f-kelas" placeholder="DET 1A">
+          </div>
+          <div class="form-field">
+            <label>Semester / Tahun</label>
+            <input type="text" id="f-semester" placeholder="Sem 1 / 2025-2026">
+          </div>
+          <div class="form-field">
+            <label>Bilangan Pelajar</label>
+            <select id="f-bilpelajar" onchange="setJumlahPelajar()">
+              <option value="30">30 pelajar</option>
+              <option value="36" selected>36 pelajar</option>
+              <option value="40">40 pelajar</option>
+              <option value="45">45 pelajar</option>
+            </select>
+          </div>
+        </div>
+        <div class="save-row">
+          <button class="btn btn-primary" onclick="simpanKelas()">💾 Simpan Maklumat</button>
+          <span class="status-saved" id="status-kelas">✅ Disimpan!</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 Panduan Wajaran Coursework</div>
+        <div class="card-subtitle">Formula Jumlah Akhir = PW(40%) + Test(15%) + Mini Project(40%) + GS(5%)</div>
+        <table class="pelajar-table">
+          <tr><th>Komponen</th><th>Bilangan</th><th>Wajaran</th><th>Cara Kira</th></tr>
+          <tr><td>Practical Work</td><td>PW1–PW5</td><td>40%</td><td>Purata 5 PW / 100 × 40</td></tr>
+          <tr><td>Test</td><td>T1–T4</td><td>15%</td><td>Purata 4 Test / 100 × 15</td></tr>
+          <tr><td>Mini Project</td><td>1</td><td>40%</td><td>PS(35%) + Knowledge(5%)</td></tr>
+          <tr><td>Generic Skills</td><td>GS1 &amp; GS2</td><td>5%</td><td>MAX(GS1,GS2) / 5 × 5</td></tr>
+          <tr style="background:#FEE2E2"><td colspan="3"><strong>Lulus Minima</strong></td><td><strong>Jumlah Akhir ≥ 40%</strong></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== PAGE: SENARAI PELAJAR ===== -->
+    <div id="page-pelajar" class="page hidden">
+      <div class="card">
+        <div class="card-title">👥 Senarai Pelajar</div>
+        <div class="card-subtitle">Isi nama, No. Pendaftaran dan kumpulan setiap pelajar.</div>
+        <table class="pelajar-table" id="pelajar-table">
+          <thead>
+            <tr><th>Bil</th><th>Nama Penuh</th><th>No. Pendaftaran</th><th>Kumpulan</th><th>Kumpulan Mini Project</th></tr>
+          </thead>
+          <tbody id="pelajar-tbody"></tbody>
+        </table>
+        <div class="save-row mt16">
+          <button class="btn btn-primary" onclick="simpanPelajar()">💾 Simpan Senarai</button>
+          <button class="btn btn-outline" onclick="showPage('pw')">Seterusnya: Isi Markah PW →</button>
+          <span class="status-saved" id="status-pelajar">✅ Disimpan!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE: PRACTICAL WORK ===== -->
+    <div id="page-pw" class="page hidden">
+      <div class="card">
+        <div class="card-title">📁 Markah Practical Work</div>
+        <div class="card-subtitle">Pilih pelajar, kemudian isi markah (skala 1–5) untuk setiap PW.</div>
+        <div class="pilih-pelajar-bar">
+          <label>Pelajar:</label>
+          <select id="sel-pelajar-pw" onchange="loadPwPelajar()"></select>
+          <div class="nav-arrows">
+            <button onclick="prevPelajar('pw')">◀</button>
+            <button onclick="nextPelajar('pw')">▶</button>
+          </div>
+        </div>
+        <div id="pw-forms"></div>
+        <div class="save-row">
+          <button class="btn btn-success" onclick="simpanMarkahPw()">💾 Simpan Markah PW</button>
+          <span class="status-saved" id="status-pw">✅ Disimpan!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE: MINI PROJECT ===== -->
+    <div id="page-miniproject" class="page hidden">
+      <div class="card">
+        <div class="card-title">🏆 Markah Mini Project</div>
+        <div class="card-subtitle">Pilih pelajar, kemudian isi markah kriteria Practical Skill dan Knowledge.</div>
+        <div class="pilih-pelajar-bar">
+          <label>Pelajar:</label>
+          <select id="sel-pelajar-mp" onchange="loadMpPelajar()"></select>
+          <div class="nav-arrows">
+            <button onclick="prevPelajar('mp')">◀</button>
+            <button onclick="nextPelajar('mp')">▶</button>
+          </div>
+        </div>
+        <div id="mp-forms"></div>
+        <div class="save-row">
+          <button class="btn btn-success" onclick="simpanMarkahMp()">💾 Simpan Markah Mini Project</button>
+          <span class="status-saved" id="status-mp">✅ Disimpan!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE: TEST ===== -->
+    <div id="page-test" class="page hidden">
+      <div class="card">
+        <div class="card-title">📝 Markah Test</div>
+        <div class="card-subtitle">Pilih pelajar, kemudian isi markah Test 1 hingga Test 4 (%).</div>
+        <div class="pilih-pelajar-bar">
+          <label>Pelajar:</label>
+          <select id="sel-pelajar-test" onchange="loadTestPelajar()"></select>
+          <div class="nav-arrows">
+            <button onclick="prevPelajar('test')">◀</button>
+            <button onclick="nextPelajar('test')">▶</button>
+          </div>
+        </div>
+        <div id="test-forms"></div>
+        <div class="save-row">
+          <button class="btn btn-success" onclick="simpanMarkahTest()">💾 Simpan Markah Test</button>
+          <span class="status-saved" id="status-test">✅ Disimpan!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE: GENERIC SKILLS ===== -->
+    <div id="page-gs" class="page hidden">
+      <div class="card">
+        <div class="card-title">⭐ Generic Skills</div>
+        <div class="card-subtitle">Pilih pelajar, isi GS1 dan GS2. Markah tertinggi (MAX) akan diambil.</div>
+        <div class="pilih-pelajar-bar">
+          <label>Pelajar:</label>
+          <select id="sel-pelajar-gs" onchange="loadGsPelajar()"></select>
+          <div class="nav-arrows">
+            <button onclick="prevPelajar('gs')">◀</button>
+            <button onclick="nextPelajar('gs')">▶</button>
+          </div>
+        </div>
+        <div id="gs-forms"></div>
+        <div class="save-row">
+          <button class="btn btn-success" onclick="simpanMarkahGs()">💾 Simpan Markah GS</button>
+          <span class="status-saved" id="status-gs">✅ Disimpan!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE: KEPUTUSAN ===== -->
+    <div id="page-keputusan" class="page hidden">
+      <div class="card">
+        <div class="card-title">📊 Keputusan Kelas</div>
+        <div class="card-subtitle" id="keputusan-subtitle">Ringkasan markah semua pelajar</div>
+        <div class="summary-header" id="stat-boxes"></div>
+        <div class="save-row" style="margin-bottom:14px;">
+          <button class="btn btn-primary" onclick="janaSemula()">🔄 Kemas Kini</button>
+          <button class="btn btn-outline" onclick="window.print()">🖨️ Cetak</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="keputusan-table" id="keputusan-table">
+            <thead>
+              <tr>
+                <th>Bil</th>
+                <th style="text-align:left">Nama Pelajar</th>
+                <th>No. Pend.</th>
+                <th>PW (40%)</th>
+                <th>Test (15%)</th>
+                <th>MP (40%)</th>
+                <th>GS (5%)</th>
+                <th>Jumlah Akhir</th>
+                <th>Gred</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="keputusan-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
 </div>
 
-<!-- ===== TAB 1: PANDUAN ===== -->
-<div id="panduan" class="panel active">
-
-  <div class="card">
-    <h2>Struktur Coursework &amp; Wajaran</h2>
-    <div class="badges">
-      <span class="badge badge-pw">Practical Work × 5 = 40%</span>
-      <span class="badge badge-test">Test × 4 = 15%</span>
-      <span class="badge badge-mp">Mini Project × 1 = 40%</span>
-      <span class="badge badge-gs">Generic Skills × 2 (ambil MAX) = 5%</span>
-      <span class="badge badge-total">JUMLAH AKHIR = 100%</span>
-    </div>
-    <div class="formula-box">
-      <strong>JUMLAH AKHIR</strong> = <strong>AVG(PW1..PW5)</strong>/100 × 40 + <strong>AVG(T1..T4)</strong>/100 × 15 + <strong>Mini Project</strong> + <strong>MAX(GS1,GS2)</strong>/5 × 5
-    </div>
-    <div class="info-grid">
-      <div class="info-item"><div class="title">Practical Work (PW1–PW5)</div><div class="value">Purata 5 PW × 40%</div></div>
-      <div class="info-item"><div class="title">Test (T1–T4)</div><div class="value">Purata 4 Test × 15%</div></div>
-      <div class="info-item"><div class="title">Mini Project</div><div class="value">PS(35%) + K(5%) = 40%</div></div>
-      <div class="info-item"><div class="title">Generic Skills</div><div class="value">MAX(GS1, GS2) ÷ 5 × 5%</div></div>
-    </div>
-    <h3>Skala Gred</h3>
-    <div class="grade-scale">
-      <span class="gs-item gs-a">A / A- : 80–100</span>
-      <span class="gs-item gs-b">B+ / B / B- : 65–79</span>
-      <span class="gs-item gs-c">C+ / C : 50–64</span>
-      <span class="gs-item gs-d">D : 45–49</span>
-      <span class="gs-item gs-e">E (Gagal) : &lt; 45</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Rubrik Practical Work</h2>
-    <h3>PW1 — Kriteria &amp; Weightage (Jumlah = 100%)</h3>
-    <table class="rubrik-table">
-      <tr><th>Bil</th><th class="kriteria-col">Kriteria</th><th>W(%)</th><th>Markah Min (1)</th><th>Markah Maks (5)</th></tr>
-      <tr><td>1</td><td class="kriteria-col">Organizes proper equipment</td><td class="w-col">15</td><td>3</td><td>15</td></tr>
-      <tr><td>2</td><td class="kriteria-col">Construct experiment (standard procedures)</td><td class="w-col">15</td><td>3</td><td>15</td></tr>
-      <tr><td>3</td><td class="kriteria-col">Assembles equipment correctly</td><td class="w-col">20</td><td>4</td><td>20</td></tr>
-      <tr><td>4</td><td class="kriteria-col">Identify resistor value (colour code)</td><td class="w-col">20</td><td>4</td><td>20</td></tr>
-      <tr><td>5</td><td class="kriteria-col">Demonstrate safety precautions</td><td class="w-col">20</td><td>4</td><td>20</td></tr>
-      <tr><td>6</td><td class="kriteria-col">Record experimental data accurately</td><td class="w-col">5</td><td>1</td><td>5</td></tr>
-      <tr><td>7</td><td class="kriteria-col">Discussion</td><td class="w-col">5</td><td>1</td><td>5</td></tr>
-    </table>
-    <p style="font-size:11px;color:#57606a;margin-top:6px;">Formula: Jumlah = Σ (markah_kriteria / 5) × weightage</p>
-
-    <h3>PW2 — Kriteria &amp; Weightage</h3>
-    <table class="rubrik-table">
-      <tr><th>Bil</th><th class="kriteria-col">Kriteria</th><th>W(%)</th></tr>
-      <tr><td>1</td><td class="kriteria-col">Equipment Preparation &amp; Setup</td><td class="w-col">10</td></tr>
-      <tr><td>2</td><td class="kriteria-col">Resistance Measurement Technique (Part A &amp; B)</td><td class="w-col">15</td></tr>
-      <tr><td>3</td><td class="kriteria-col">Circuit Construction (Part C &amp; D)</td><td class="w-col">15</td></tr>
-      <tr><td>4</td><td class="kriteria-col">DC Voltage Measurement Technique (Part C)</td><td class="w-col">15</td></tr>
-      <tr><td>5</td><td class="kriteria-col">DC Current Measurement Technique (Part D)</td><td class="w-col">15</td></tr>
-      <tr><td>6</td><td class="kriteria-col">Safety Practices</td><td class="w-col">10</td></tr>
-      <tr><td>7</td><td class="kriteria-col">Experimental Data Recording &amp; Integrity</td><td class="w-col">10</td></tr>
-      <tr><td>8</td><td class="kriteria-col">Calculation of experimental results</td><td class="w-col">10</td></tr>
-    </table>
-
-    <h3>PW3 — Kriteria &amp; Weightage</h3>
-    <table class="rubrik-table">
-      <tr><th>Bil</th><th class="kriteria-col">Kriteria</th><th>W(%)</th></tr>
-      <tr><td>1</td><td class="kriteria-col">Equipment Preparation &amp; Setup</td><td class="w-col">10</td></tr>
-      <tr><td>2</td><td class="kriteria-col">Analogue Oscilloscope Calibration Technique</td><td class="w-col">10</td></tr>
-      <tr><td>3</td><td class="kriteria-col">Signal Generation &amp; Configuration Technique</td><td class="w-col">5</td></tr>
-      <tr><td>4</td><td class="kriteria-col">Analogue Oscilloscope Measurement Technique</td><td class="w-col">20</td></tr>
-      <tr><td>5</td><td class="kriteria-col">Circuit Construction</td><td class="w-col">10</td></tr>
-      <tr><td>6</td><td class="kriteria-col">Digital Oscilloscope Measurement Technique</td><td class="w-col">15</td></tr>
-      <tr><td>7</td><td class="kriteria-col">Waveform Sketching</td><td class="w-col">10</td></tr>
-      <tr><td>8</td><td class="kriteria-col">Safety Practice</td><td class="w-col">10</td></tr>
-      <tr><td>9</td><td class="kriteria-col">Calculation</td><td class="w-col">10</td></tr>
-    </table>
-
-    <h3>PW4 — Kriteria &amp; Weightage</h3>
-    <table class="rubrik-table">
-      <tr><th>Bil</th><th class="kriteria-col">Kriteria</th><th>W(%)</th></tr>
-      <tr><td>1</td><td class="kriteria-col">Equipment Setup</td><td class="w-col">10</td></tr>
-      <tr><td>2</td><td class="kriteria-col">Circuit Construction</td><td class="w-col">25</td></tr>
-      <tr><td>3</td><td class="kriteria-col">Resistance Measurement</td><td class="w-col">10</td></tr>
-      <tr><td>4</td><td class="kriteria-col">Bridge Balance Technique</td><td class="w-col">15</td></tr>
-      <tr><td>5</td><td class="kriteria-col">Safety Practices</td><td class="w-col">10</td></tr>
-      <tr><td>6</td><td class="kriteria-col">Data &amp; Results Presentation</td><td class="w-col">10</td></tr>
-      <tr><td>7</td><td class="kriteria-col">Calculation</td><td class="w-col">10</td></tr>
-      <tr><td>8</td><td class="kriteria-col">Discussion</td><td class="w-col">5</td></tr>
-      <tr><td>9</td><td class="kriteria-col">Conclusion</td><td class="w-col">5</td></tr>
-    </table>
-
-    <h3>PW5 — Kriteria &amp; Weightage</h3>
-    <table class="rubrik-table">
-      <tr><th>Bil</th><th class="kriteria-col">Kriteria</th><th>W(%)</th></tr>
-      <tr><td>1</td><td class="kriteria-col">Equipment Setup</td><td class="w-col">10</td></tr>
-      <tr><td>2</td><td class="kriteria-col">Measurement Technique</td><td class="w-col">30</td></tr>
-      <tr><td>3</td><td class="kriteria-col">Safety Practices</td><td class="w-col">20</td></tr>
-      <tr><td>4</td><td class="kriteria-col">Data &amp; Results Presentation</td><td class="w-col">10</td></tr>
-      <tr><td>5</td><td class="kriteria-col">Calculation</td><td class="w-col">20</td></tr>
-      <tr><td>6</td><td class="kriteria-col">Discussion</td><td class="w-col">5</td></tr>
-      <tr><td>7</td><td class="kriteria-col">Conclusion</td><td class="w-col">5</td></tr>
-    </table>
-  </div>
-
-  <div class="card">
-    <h2>Rubrik Mini Project</h2>
-    <h3>Bahagian 1 — Practical Skill (Wajaran Akhir: 35%)</h3>
-    <table class="rubrik-table">
-      <tr><th>Bil</th><th class="kriteria-col">Kriteria</th><th>W(%)</th></tr>
-      <tr><td>1</td><td class="kriteria-col">Equipment Setup &amp; Safety</td><td class="w-col">25</td></tr>
-      <tr><td>2</td><td class="kriteria-col">Circuit Construction</td><td class="w-col">25</td></tr>
-      <tr><td>3</td><td class="kriteria-col">Measurement Technique</td><td class="w-col">20</td></tr>
-      <tr><td>4</td><td class="kriteria-col">Data Recording &amp; Results</td><td class="w-col">20</td></tr>
-      <tr><td>5</td><td class="kriteria-col">Teamwork &amp; Attitude</td><td class="w-col">10</td></tr>
-    </table>
-    <p style="font-size:11px;color:#57606a;margin-top:6px;">Formula: PS_score = Σ(markah/5 × W) → dikali (35/100) untuk markah akhir</p>
-
-    <h3>Bahagian 2 — Knowledge (Wajaran Akhir: 5%)</h3>
-    <table class="rubrik-table">
-      <tr><th>Bil</th><th class="kriteria-col">Kriteria</th><th>W(%)</th></tr>
-      <tr><td>1</td><td class="kriteria-col">Theoretical Understanding</td><td class="w-col">15</td></tr>
-      <tr><td>2</td><td class="kriteria-col">Problem Analysis</td><td class="w-col">25</td></tr>
-      <tr><td>3</td><td class="kriteria-col">Solution Proposal</td><td class="w-col">25</td></tr>
-      <tr><td>4</td><td class="kriteria-col">Discussion Quality</td><td class="w-col">15</td></tr>
-      <tr><td>5</td><td class="kriteria-col">Conclusion</td><td class="w-col">20</td></tr>
-    </table>
-    <p style="font-size:11px;color:#57606a;margin-top:6px;">Formula: K_score = Σ(markah/5 × W) → dikali (5/100) untuk markah akhir</p>
-  </div>
-
-  <div class="card">
-    <h2>Rubrik Generic Skills (GS)</h2>
-    <p style="font-size:13px;color:#57606a;margin-bottom:12px;">Dinilai <strong>2 kali</strong> — GS1 semasa PW awal, GS2 semasa PW akhir. Markah akhir = <strong>MAX(GS1, GS2)</strong> ÷ 5 × 5%</p>
-    <table class="rubrik-table">
-      <tr><th>Bil</th><th class="kriteria-col">Kriteria</th><th>Skala</th></tr>
-      <tr><td>1</td><td class="kriteria-col">Kebolehan Berkomunikasi</td><td class="w-col">1–5</td></tr>
-      <tr><td>2</td><td class="kriteria-col">Kemahiran Berfikir Kritis</td><td class="w-col">1–5</td></tr>
-      <tr><td>3</td><td class="kriteria-col">Etika &amp; Profesionalisme</td><td class="w-col">1–5</td></tr>
-      <tr><td>4</td><td class="kriteria-col">Kerja Berpasukan</td><td class="w-col">1–5</td></tr>
-      <tr><td>5</td><td class="kriteria-col">Pembelajaran Sepanjang Hayat</td><td class="w-col">1–5</td></tr>
-    </table>
-    <p style="font-size:11px;color:#57606a;margin-top:6px;">Jumlah GS = Purata kesemua kriteria (skala /5)</p>
-  </div>
-
-  <!-- CARD: MAKLUMAT KELAS & SENARAI MURID -->
-  <div class="card">
-    <h2>📚 Maklumat Kelas &amp; Senarai Murid</h2>
-
-    <div class="kelas-grid">
-      <div class="kelas-field">
-        <label>Nama Pensyarah</label>
-        <input type="text" id="nama-pensyarah" placeholder="Contoh: En. Ahmad bin Ali">
-      </div>
-      <div class="kelas-field">
-        <label>Kursus</label>
-        <input type="text" id="nama-kursus" placeholder="Contoh: Measurement &amp; Instrumentation">
-      </div>
-      <div class="kelas-field">
-        <label>Kelas</label>
-        <input type="text" id="nama-kelas" placeholder="Contoh: DET 1A">
-      </div>
-      <div class="kelas-field">
-        <label>Semester / Tahun</label>
-        <input type="text" id="semester" placeholder="Contoh: Sem 1 / 2025-2026">
-      </div>
-    </div>
-
-    <h3>Senarai 36 Murid</h3>
-    <p style="font-size:12px;color:#57606a;margin-bottom:10px;">Isi nama dan No. Pendaftaran murid di sini. Data disimpan dalam browser secara automatik.</p>
-
-    <table class="murid-table">
-      <thead>
-        <tr>
-          <th>Bil</th>
-          <th>Nama Penuh</th>
-          <th>No. Pendaftaran</th>
-          <th>Kumpulan</th>
-        </tr>
-      </thead>
-      <tbody id="murid-tbody"></tbody>
-    </table>
-
-    <div class="murid-btn-row">
-      <button class="murid-btn murid-btn-save" onclick="simpanMurid()">💾 Simpan Data</button>
-      <button class="murid-btn murid-btn-clear" onclick="kosongkanMurid()">🗑️ Kosongkan Semua</button>
-    </div>
-    <p style="font-size:11px;color:#9ca3af;margin-top:8px;">Data disimpan dalam LocalStorage browser anda — kekal walaupun browser ditutup.</p>
-  </div>
-
-</div>
-
-<!-- ===== TAB 2: KALKULATOR ===== -->
-<div id="kalkulator" class="panel">
-
-  <div class="card">
-    <h2>🧮 Kalkulator Markah Pelajar</h2>
-    <p style="font-size:13px;color:#57606a;margin-bottom:16px;">Masukkan markah rubrik (skala 1–5) untuk setiap kriteria. Jumlah Akhir akan dikira secara automatik.</p>
-
-    <div class="calc-grid">
-
-      <!-- PW SECTION -->
-      <div class="calc-section pw-sec">
-        <h3>📁 Practical Work (PW1–PW5) → 40%</h3>
-
-        <label style="font-size:11px;font-weight:700;color:#57606a;">PW1 (markah /100)</label>
-        <div class="input-row" style="margin-top:4px;">
-          <label>Masukkan jumlah PW1</label>
-          <input type="number" id="pw1" min="0" max="100" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/100</span>
-        </div>
-        <div class="input-row">
-          <label>PW2</label>
-          <input type="number" id="pw2" min="0" max="100" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/100</span>
-        </div>
-        <div class="input-row">
-          <label>PW3</label>
-          <input type="number" id="pw3" min="0" max="100" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/100</span>
-        </div>
-        <div class="input-row">
-          <label>PW4</label>
-          <input type="number" id="pw4" min="0" max="100" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/100</span>
-        </div>
-        <div class="input-row">
-          <label>PW5</label>
-          <input type="number" id="pw5" min="0" max="100" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/100</span>
-        </div>
-        <div class="subtotal" id="pw-subtotal">AVG PW (40%) = <strong>–</strong> <span>markah diisi: 0/5</span></div>
-      </div>
-
-      <!-- TEST SECTION -->
-      <div class="calc-section test-sec">
-        <h3>📝 Test (T1–T4) → 15%</h3>
-        <label style="font-size:11px;font-weight:700;color:#57606a;">Masukkan markah test (%)</label>
-        <div class="input-row" style="margin-top:4px;">
-          <label>Test 1</label>
-          <input type="number" id="t1" min="0" max="100" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/%</span>
-        </div>
-        <div class="input-row">
-          <label>Test 2</label>
-          <input type="number" id="t2" min="0" max="100" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/%</span>
-        </div>
-        <div class="input-row">
-          <label>Test 3</label>
-          <input type="number" id="t3" min="0" max="100" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/%</span>
-        </div>
-        <div class="input-row">
-          <label>Test 4</label>
-          <input type="number" id="t4" min="0" max="100" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/%</span>
-        </div>
-        <div class="subtotal" id="test-subtotal">AVG Test (15%) = <strong>–</strong> <span>markah diisi: 0/4</span></div>
-      </div>
-
-      <!-- MINI PROJECT -->
-      <div class="calc-section mp-sec">
-        <h3>🏆 Mini Project → 40%</h3>
-        <label style="font-size:11px;font-weight:700;color:#57606a;">Practical Skill (skala rubrik 1–5 per kriteria)</label>
-        <div class="input-row" style="margin-top:4px;">
-          <label>Equipment Setup &amp; Safety <span style="color:#9ca3af">(W=25)</span></label>
-          <input type="number" id="ps1" min="1" max="5" step="0.1" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/5</span>
-        </div>
-        <div class="input-row">
-          <label>Circuit Construction <span style="color:#9ca3af">(W=25)</span></label>
-          <input type="number" id="ps2" min="1" max="5" step="0.1" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/5</span>
-        </div>
-        <div class="input-row">
-          <label>Measurement Technique <span style="color:#9ca3af">(W=20)</span></label>
-          <input type="number" id="ps3" min="1" max="5" step="0.1" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/5</span>
-        </div>
-        <div class="input-row">
-          <label>Data Recording &amp; Results <span style="color:#9ca3af">(W=20)</span></label>
-          <input type="number" id="ps4" min="1" max="5" step="0.1" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/5</span>
-        </div>
-        <div class="input-row">
-          <label>Teamwork &amp; Attitude <span style="color:#9ca3af">(W=10)</span></label>
-          <input type="number" id="ps5" min="1" max="5" step="0.1" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/5</span>
-        </div>
-        <label style="font-size:11px;font-weight:700;color:#57606a;margin-top:12px;display:block;">Knowledge (skala rubrik 1–5)</label>
-        <div class="input-row" style="margin-top:4px;">
-          <label>Theoretical Understanding <span style="color:#9ca3af">(W=15)</span></label>
-          <input type="number" id="kn1" min="1" max="5" step="0.1" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/5</span>
-        </div>
-        <div class="input-row">
-          <label>Problem Analysis <span style="color:#9ca3af">(W=25)</span></label>
-          <input type="number" id="kn2" min="1" max="5" step="0.1" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/5</span>
-        </div>
-        <div class="input-row">
-          <label>Solution Proposal <span style="color:#9ca3af">(W=25)</span></label>
-          <input type="number" id="kn3" min="1" max="5" step="0.1" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/5</span>
-        </div>
-        <div class="input-row">
-          <label>Discussion Quality <span style="color:#9ca3af">(W=15)</span></label>
-          <input type="number" id="kn4" min="1" max="5" step="0.1" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/5</span>
-        </div>
-        <div class="input-row">
-          <label>Conclusion <span style="color:#9ca3af">(W=20)</span></label>
-          <input type="number" id="kn5" min="1" max="5" step="0.1" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/5</span>
-        </div>
-        <div class="subtotal" id="mp-subtotal">Mini Project (40%) = <strong>–</strong> <span>PS + Knowledge</span></div>
-      </div>
-
-      <!-- GENERIC SKILLS -->
-      <div class="calc-section gs-sec">
-        <h3>⭐ Generic Skills → 5%</h3>
-        <p style="font-size:11px;color:#57606a;margin-bottom:10px;">Ambil MAX antara GS1 dan GS2</p>
-        <label style="font-size:11px;font-weight:700;color:#57606a;">GS1 (purata /5)</label>
-        <div class="input-row" style="margin-top:4px;">
-          <label>Jumlah GS1</label>
-          <input type="number" id="gs1" min="0" max="5" step="0.1" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/5</span>
-        </div>
-        <label style="font-size:11px;font-weight:700;color:#57606a;margin-top:10px;display:block;">GS2 (purata /5)</label>
-        <div class="input-row" style="margin-top:4px;">
-          <label>Jumlah GS2</label>
-          <input type="number" id="gs2" min="0" max="5" step="0.1" value="" placeholder="–" oninput="kira()">
-          <span class="max-label">/5</span>
-        </div>
-        <div class="subtotal" id="gs-subtotal">GS (5%) = <strong>–</strong> <span>MAX(GS1, GS2) ÷ 5 × 5</span></div>
-      </div>
-
-    </div><!-- end calc-grid -->
-
-    <!-- JUMLAH AKHIR -->
-    <div class="jumlah-box" id="jumlah-box">
-      <div class="label">JUMLAH AKHIR COURSEWORK</div>
-      <div class="score" id="jumlah-score">–</div>
-      <div class="grade" id="jumlah-grade">Sila isi markah di atas</div>
-      <div class="breakdown">
-        <div class="bk-item"><strong id="bk-pw">–</strong>PW (40%)</div>
-        <div class="bk-item"><strong id="bk-test">–</strong>Test (15%)</div>
-        <div class="bk-item"><strong id="bk-mp">–</strong>Mini Proj (40%)</div>
-        <div class="bk-item"><strong id="bk-gs">–</strong>GS (5%)</div>
-      </div>
-    </div>
-
-    <button class="reset-btn" onclick="resetKalkulator()">🔄 Reset Semua</button>
-  </div>
-
-</div><!-- end kalkulator panel -->
-
-<footer>
-  Measurement &amp; Instrumentation — Template Rubrik Coursework &nbsp;|&nbsp; Made with IBM Bob
-</footer>
+<footer>Sistem Pemarkahan Rubrik — Measurement &amp; Instrumentation &nbsp;|&nbsp; Made with IBM Bob</footer>
 
 <script>
-  function val(id) {
-    const v = parseFloat(document.getElementById(id).value);
-    return isNaN(v) ? null : v;
+// ============================================================
+// DATA STORE
+// ============================================================
+const DB_KEY = 'rubrik-v2-data';
+
+function loadDB() {
+  try { return JSON.parse(localStorage.getItem(DB_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveDB(db) {
+  localStorage.setItem(DB_KEY, JSON.stringify(db));
+}
+function getDB() { return loadDB(); }
+
+// ============================================================
+// PAGE NAVIGATION
+// ============================================================
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.remove('hidden');
+  document.getElementById('nav-' + name).classList.add('active');
+
+  if (name === 'pw') { populatePelajarSelect('sel-pelajar-pw'); loadPwPelajar(); }
+  if (name === 'miniproject') { populatePelajarSelect('sel-pelajar-mp'); loadMpPelajar(); }
+  if (name === 'test') { populatePelajarSelect('sel-pelajar-test'); loadTestPelajar(); }
+  if (name === 'gs') { populatePelajarSelect('sel-pelajar-gs'); loadGsPelajar(); }
+  if (name === 'keputusan') { janaSemula(); }
+}
+
+// ============================================================
+// MAKLUMAT KELAS
+// ============================================================
+function simpanKelas() {
+  const db = getDB();
+  db.kelas = {
+    pensyarah: document.getElementById('f-pensyarah').value,
+    kursus: document.getElementById('f-kursus').value,
+    nama: document.getElementById('f-kelas').value,
+    semester: document.getElementById('f-semester').value,
+    bilPelajar: parseInt(document.getElementById('f-bilpelajar').value)
+  };
+  saveDB(db);
+  updateTopbar();
+  showStatus('status-kelas');
+  setJumlahPelajar();
+}
+
+function updateTopbar() {
+  const db = getDB();
+  if (db.kelas) {
+    const k = db.kelas;
+    document.getElementById('topbar-info').textContent =
+      [k.kursus, k.nama, k.semester].filter(Boolean).join(' | ');
   }
+}
 
-  function clamp(v, min, max) { return Math.min(Math.max(v, min), max); }
+function setJumlahPelajar() {
+  const bil = parseInt(document.getElementById('f-bilpelajar').value) || 36;
+  const db = getDB();
+  if (!db.kelas) db.kelas = {};
+  db.kelas.bilPelajar = bil;
+  saveDB(db);
+  binarBarisPelajar(bil);
+}
 
-  function kira() {
-    // --- PW ---
-    const pws = ['pw1','pw2','pw3','pw4','pw5'].map(val);
-    const pwFilled = pws.filter(v => v !== null);
-    let pwWeighted = '';
-    if (pwFilled.length > 0) {
-      const avg = pwFilled.reduce((a,b)=>a+b,0) / pwFilled.length;
-      pwWeighted = (avg / 100 * 40);
-    }
-    const pwEl = document.getElementById('pw-subtotal');
-    pwEl.innerHTML = `AVG PW (40%) = <strong>${pwWeighted !== '' ? pwWeighted.toFixed(2) : '–'}</strong> <span>markah diisi: ${pwFilled.length}/5</span>`;
-
-    // --- TEST ---
-    const tests = ['t1','t2','t3','t4'].map(val);
-    const testFilled = tests.filter(v => v !== null);
-    let testWeighted = '';
-    if (testFilled.length > 0) {
-      const avg = testFilled.reduce((a,b)=>a+b,0) / testFilled.length;
-      testWeighted = (avg / 100 * 15);
-    }
-    document.getElementById('test-subtotal').innerHTML = `AVG Test (15%) = <strong>${testWeighted !== '' ? testWeighted.toFixed(2) : '–'}</strong> <span>markah diisi: ${testFilled.length}/4</span>`;
-
-    // --- MINI PROJECT ---
-    const psW = [25,25,20,20,10];
-    const knW = [15,25,25,15,20];
-    const psVals = ['ps1','ps2','ps3','ps4','ps5'].map(val);
-    const knVals = ['kn1','kn2','kn3','kn4','kn5'].map(val);
-    let ps = 0, psFilled = 0, kn = 0, knFilled = 0;
-    psVals.forEach((v,i) => { if(v!==null){ ps += (v/5)*psW[i]; psFilled++; } });
-    knVals.forEach((v,i) => { if(v!==null){ kn += (v/5)*knW[i]; knFilled++; } });
-    let mpScore = '';
-    let psScore = '', knScore = '';
-    if (psFilled === 5) psScore = (ps * 35/100).toFixed(2);
-    if (knFilled === 5) knScore = (kn * 5/100).toFixed(2);
-    if (psFilled === 5 && knFilled === 5) mpScore = (parseFloat(psScore) + parseFloat(knScore)).toFixed(2);
-    document.getElementById('mp-subtotal').innerHTML = `Mini Project (40%) = <strong>${mpScore !== '' ? mpScore : '–'}</strong> <span>PS:${psScore||'–'} + K:${knScore||'–'}</span>`;
-
-    // --- GS ---
-    const gs1 = val('gs1'), gs2 = val('gs2');
-    let gsWeighted = '';
-    if (gs1 !== null || gs2 !== null) {
-      const maxGs = Math.max(gs1 ?? 0, gs2 ?? 0);
-      gsWeighted = (maxGs / 5 * 5).toFixed(2);
-    }
-    document.getElementById('gs-subtotal').innerHTML = `GS (5%) = <strong>${gsWeighted !== '' ? gsWeighted : '–'}</strong> <span>MAX(GS1, GS2) ÷ 5 × 5</span>`;
-
-    // --- JUMLAH AKHIR ---
-    const parts = [
-      pwWeighted !== '' ? pwWeighted : null,
-      testWeighted !== '' ? testWeighted : null,
-      mpScore !== '' ? parseFloat(mpScore) : null,
-      gsWeighted !== '' ? parseFloat(gsWeighted) : null
-    ];
-    const filled = parts.filter(v => v !== null);
-    document.getElementById('bk-pw').textContent   = pwWeighted !== '' ? pwWeighted.toFixed(2) : '–';
-    document.getElementById('bk-test').textContent = testWeighted !== '' ? testWeighted.toFixed(2) : '–';
-    document.getElementById('bk-mp').textContent   = mpScore !== '' ? mpScore : '–';
-    document.getElementById('bk-gs').textContent   = gsWeighted !== '' ? gsWeighted : '–';
-
-    if (filled.length === 4) {
-      const jumlah = filled.reduce((a,b)=>a+b,0);
-      const rounded = Math.round(jumlah * 100) / 100;
-      document.getElementById('jumlah-score').textContent = rounded.toFixed(2) + '%';
-      const gradeEl = document.getElementById('jumlah-grade');
-      if (jumlah >= 80) { gradeEl.textContent = '🟢 Gred A / A-  — Cemerlang'; gradeEl.style.color = '#86EFAC'; }
-      else if (jumlah >= 65) { gradeEl.textContent = '🔵 Gred B+ / B / B-  — Baik'; gradeEl.style.color = '#93C5FD'; }
-      else if (jumlah >= 50) { gradeEl.textContent = '🟡 Gred C+ / C  — Memuaskan'; gradeEl.style.color = '#FDE68A'; }
-      else if (jumlah >= 45) { gradeEl.textContent = '🟠 Gred D  — Lulus Minima'; gradeEl.style.color = '#FCA5A5'; }
-      else { gradeEl.textContent = '🔴 Gred E  — Gagal'; gradeEl.style.color = '#F87171'; }
-    } else {
-      document.getElementById('jumlah-score').textContent = filled.length > 0 ? '(bahagian)' : '–';
-      document.getElementById('jumlah-grade').textContent = `Sila lengkapkan semua bahagian (${filled.length}/4 siap)`;
-      document.getElementById('jumlah-grade').style.color = '#a8c8e8';
-    }
+// ============================================================
+// SENARAI PELAJAR
+// ============================================================
+function binarBarisPelajar(bil) {
+  bil = bil || (getDB().kelas && getDB().kelas.bilPelajar) || 36;
+  const tbody = document.getElementById('pelajar-tbody');
+  tbody.innerHTML = '';
+  for (let i = 1; i <= bil; i++) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i}</td>
+      <td><input type="text" id="pnama-${i}" placeholder="Nama penuh"></td>
+      <td class="mono"><input type="text" id="ppend-${i}" placeholder="No. Pendaftaran"></td>
+      <td><input type="text" id="pkump-${i}" placeholder="Kumpulan"></td>
+      <td><input type="text" id="pkumpmp-${i}" placeholder="Cth: Kumpulan 1"></td>`;
+    tbody.appendChild(tr);
   }
+  muatPelajar();
+}
 
-  function resetKalkulator() {
-    ['pw1','pw2','pw3','pw4','pw5','t1','t2','t3','t4',
-     'ps1','ps2','ps3','ps4','ps5','kn1','kn2','kn3','kn4','kn5','gs1','gs2']
-     .forEach(id => { document.getElementById(id).value = ''; });
-    kira();
+function simpanPelajar() {
+  const db = getDB();
+  const bil = db.kelas && db.kelas.bilPelajar || 36;
+  db.pelajar = [];
+  for (let i = 1; i <= bil; i++) {
+    db.pelajar.push({
+      nama: (document.getElementById('pnama-'+i)||{}).value || '',
+      pend: (document.getElementById('ppend-'+i)||{}).value || '',
+      kump: (document.getElementById('pkump-'+i)||{}).value || '',
+      kumpMp: (document.getElementById('pkumpmp-'+i)||{}).value || ''
+    });
   }
+  saveDB(db);
+  showStatus('status-pelajar');
+}
 
-  function showTab(id) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    event.target.classList.add('active');
+function muatPelajar() {
+  const db = getDB();
+  if (!db.pelajar) return;
+  db.pelajar.forEach((p, idx) => {
+    const i = idx + 1;
+    const n = document.getElementById('pnama-'+i);
+    const pd = document.getElementById('ppend-'+i);
+    const k = document.getElementById('pkump-'+i);
+    const km = document.getElementById('pkumpmp-'+i);
+    if (n) n.value = p.nama || '';
+    if (pd) pd.value = p.pend || '';
+    if (k) k.value = p.kump || '';
+    if (km) km.value = p.kumpMp || '';
+  });
+}
+
+function populatePelajarSelect(selId) {
+  const db = getDB();
+  const sel = document.getElementById(selId);
+  const prev = sel.value;
+  sel.innerHTML = '';
+  const pelajar = db.pelajar || [];
+  if (pelajar.length === 0) {
+    sel.innerHTML = '<option value="">-- Tiada pelajar. Isi dulu di Senarai Pelajar --</option>';
+    return;
   }
+  pelajar.forEach((p, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = `${idx+1}. ${p.nama || '(Kosong)'}`;
+    sel.appendChild(opt);
+  });
+  if (prev !== '' && pelajar[prev]) sel.value = prev;
+}
 
-  // ===== SENARAI MURID =====
-  function binarBarisMurid() {
-    const tbody = document.getElementById('murid-tbody');
-    tbody.innerHTML = '';
-    for (let i = 1; i <= 36; i++) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${i}</td>
-        <td><input type="text" id="nama-${i}" placeholder="Nama penuh pelajar"></td>
-        <td class="no-pend"><input type="text" id="pend-${i}" placeholder="No. Pendaftaran"></td>
-        <td><input type="text" id="kump-${i}" placeholder="Kumpulan"></td>`;
-      tbody.appendChild(tr);
-    }
-    muatMurid();
-  }
+function prevPelajar(page) {
+  const selId = { pw:'sel-pelajar-pw', mp:'sel-pelajar-mp', test:'sel-pelajar-test', gs:'sel-pelajar-gs' }[page];
+  const sel = document.getElementById(selId);
+  if (sel.selectedIndex > 0) { sel.selectedIndex--; sel.dispatchEvent(new Event('change')); }
+}
+function nextPelajar(page) {
+  const selId = { pw:'sel-pelajar-pw', mp:'sel-pelajar-mp', test:'sel-pelajar-test', gs:'sel-pelajar-gs' }[page];
+  const sel = document.getElementById(selId);
+  if (sel.selectedIndex < sel.options.length - 1) { sel.selectedIndex++; sel.dispatchEvent(new Event('change')); }
+}
 
-  function simpanMurid() {
-    const data = {
-      pensyarah: document.getElementById('nama-pensyarah').value,
-      kursus: document.getElementById('nama-kursus').value,
-      kelas: document.getElementById('nama-kelas').value,
-      semester: document.getElementById('semester').value,
-      murid: []
-    };
-    for (let i = 1; i <= 36; i++) {
-      data.murid.push({
-        nama: document.getElementById('nama-'+i).value,
-        pend: document.getElementById('pend-'+i).value,
-        kump: document.getElementById('kump-'+i).value
-      });
-    }
-    localStorage.setItem('rubrik-murid-data', JSON.stringify(data));
-    alert('✅ Data berjaya disimpan!');
-  }
+// ============================================================
+// PRACTICAL WORK
+// ============================================================
+const PW_RUBRIK = [
+  { nama: 'PW1', kriteria: [
+    { label: 'Organizes proper equipment', w: 15 },
+    { label: 'Construct experiment (standard procedures)', w: 15 },
+    { label: 'Assembles equipment correctly', w: 20 },
+    { label: 'Identify resistor value (colour code)', w: 20 },
+    { label: 'Demonstrate safety precautions', w: 20 },
+    { label: 'Record experimental data accurately', w: 5 },
+    { label: 'Discussion', w: 5 }
+  ]},
+  { nama: 'PW2', kriteria: [
+    { label: 'Equipment Preparation & Setup', w: 10 },
+    { label: 'Resistance Measurement Technique (Part A & B)', w: 15 },
+    { label: 'Circuit Construction (Part C & D)', w: 15 },
+    { label: 'DC Voltage Measurement Technique (Part C)', w: 15 },
+    { label: 'DC Current Measurement Technique (Part D)', w: 15 },
+    { label: 'Safety Practices', w: 10 },
+    { label: 'Experimental Data Recording & Integrity', w: 10 },
+    { label: 'Calculation of experimental results', w: 10 }
+  ]},
+  { nama: 'PW3', kriteria: [
+    { label: 'Equipment Preparation & Setup', w: 10 },
+    { label: 'Analogue Oscilloscope Calibration Technique', w: 10 },
+    { label: 'Signal Generation & Configuration Technique', w: 5 },
+    { label: 'Analogue Oscilloscope Measurement Technique', w: 20 },
+    { label: 'Circuit Construction', w: 10 },
+    { label: 'Digital Oscilloscope Measurement Technique', w: 15 },
+    { label: 'Waveform Sketching', w: 10 },
+    { label: 'Safety Practice', w: 10 },
+    { label: 'Calculation', w: 10 }
+  ]},
+  { nama: 'PW4', kriteria: [
+    { label: 'Equipment Setup', w: 10 },
+    { label: 'Circuit Construction', w: 25 },
+    { label: 'Resistance Measurement', w: 10 },
+    { label: 'Bridge Balance Technique', w: 15 },
+    { label: 'Safety Practices', w: 10 },
+    { label: 'Data & Results Presentation', w: 10 },
+    { label: 'Calculation', w: 10 },
+    { label: 'Discussion', w: 5 },
+    { label: 'Conclusion', w: 5 }
+  ]},
+  { nama: 'PW5', kriteria: [
+    { label: 'Equipment Setup', w: 10 },
+    { label: 'Measurement Technique', w: 30 },
+    { label: 'Safety Practices', w: 20 },
+    { label: 'Data & Results Presentation', w: 10 },
+    { label: 'Calculation', w: 20 },
+    { label: 'Discussion', w: 5 },
+    { label: 'Conclusion', w: 5 }
+  ]}
+];
 
-  function muatMurid() {
-    const raw = localStorage.getItem('rubrik-murid-data');
-    if (!raw) return;
-    try {
-      const data = JSON.parse(raw);
-      if (data.pensyarah) document.getElementById('nama-pensyarah').value = data.pensyarah;
-      if (data.kursus)    document.getElementById('nama-kursus').value    = data.kursus;
-      if (data.kelas)     document.getElementById('nama-kelas').value     = data.kelas;
-      if (data.semester)  document.getElementById('semester').value       = data.semester;
-      if (data.murid) {
-        data.murid.forEach((m, idx) => {
-          const i = idx + 1;
-          if (document.getElementById('nama-'+i)) document.getElementById('nama-'+i).value = m.nama || '';
-          if (document.getElementById('pend-'+i)) document.getElementById('pend-'+i).value = m.pend || '';
-          if (document.getElementById('kump-'+i)) document.getElementById('kump-'+i).value = m.kump || '';
-        });
-      }
-    } catch(e) {}
-  }
+function loadPwPelajar() {
+  const idx = parseInt(document.getElementById('sel-pelajar-pw').value);
+  if (isNaN(idx)) return;
+  const db = getDB();
+  const saved = (db.markahPw && db.markahPw[idx]) || {};
+  let html = '';
+  PW_RUBRIK.forEach((pw, pi) => {
+    html += `<div class="rubrik-section">
+      <h3>${pw.nama} — ${pw.kriteria.length} kriteria</h3>`;
+    pw.kriteria.forEach((k, ki) => {
+      const val = (saved[pi] && saved[pi][ki] !== undefined) ? saved[pi][ki] : '';
+      html += `<div class="kriteria-row">
+        <span class="kriteria-label">${k.label}</span>
+        <span class="kriteria-wt">W = ${k.w}%</span>
+        <div class="kriteria-input">
+          <input type="number" id="pw-${pi}-${ki}" min="1" max="5" step="0.1" value="${val}" placeholder="–" oninput="kiraPwSubtotal(${pi})">
+          <span class="max">/5</span>
+        </div>
+      </div>`;
+    });
+    const jumlah = hitungPwJumlah(pi, saved[pi] || {});
+    html += `<div class="subtotal-bar">
+      <span class="label">${pw.nama} Jumlah (/100)</span>
+      <span class="value" id="pw-sub-${pi}">${jumlah > 0 ? jumlah.toFixed(1) : '–'}</span>
+    </div></div>`;
+  });
+  document.getElementById('pw-forms').innerHTML = html;
+  PW_RUBRIK.forEach((_, pi) => kiraPwSubtotal(pi));
+}
 
-  function kosongkanMurid() {
-    if (!confirm('Adakah anda pasti nak kosongkan semua data murid?')) return;
-    localStorage.removeItem('rubrik-murid-data');
-    ['nama-pensyarah','nama-kursus','nama-kelas','semester'].forEach(id => document.getElementById(id).value = '');
-    for (let i = 1; i <= 36; i++) {
-      document.getElementById('nama-'+i).value = '';
-      document.getElementById('pend-'+i).value = '';
-      document.getElementById('kump-'+i).value = '';
-    }
-  }
+function hitungPwJumlah(pi, savedKriteria) {
+  let total = 0;
+  PW_RUBRIK[pi].kriteria.forEach((k, ki) => {
+    const v = parseFloat(savedKriteria[ki]);
+    if (!isNaN(v)) total += (v / 5) * k.w;
+  });
+  return total;
+}
 
-  // Auto-simpan bila tukar nilai maklumat kelas
-  document.addEventListener('DOMContentLoaded', function() {
-    ['nama-pensyarah','nama-kursus','nama-kelas','semester'].forEach(id => {
-      document.getElementById(id).addEventListener('change', simpanMurid);
+function kiraPwSubtotal(pi) {
+  let total = 0;
+  PW_RUBRIK[pi].kriteria.forEach((k, ki) => {
+    const el = document.getElementById(`pw-${pi}-${ki}`);
+    if (el) { const v = parseFloat(el.value); if (!isNaN(v)) total += (v / 5) * k.w; }
+  });
+  const el = document.getElementById(`pw-sub-${pi}`);
+  if (el) el.textContent = total > 0 ? total.toFixed(1) : '–';
+}
+
+function simpanMarkahPw() {
+  const idx = parseInt(document.getElementById('sel-pelajar-pw').value);
+  if (isNaN(idx)) return;
+  const db = getDB();
+  if (!db.markahPw) db.markahPw = {};
+  db.markahPw[idx] = {};
+  PW_RUBRIK.forEach((pw, pi) => {
+    db.markahPw[idx][pi] = {};
+    pw.kriteria.forEach((k, ki) => {
+      const el = document.getElementById(`pw-${pi}-${ki}`);
+      db.markahPw[idx][pi][ki] = el ? parseFloat(el.value) || null : null;
     });
   });
+  saveDB(db);
+  showStatus('status-pw');
+}
 
-  // Init — jana 36 baris murid
-  binarBarisMurid();
+// ============================================================
+// MINI PROJECT
+// ============================================================
+const MP_PS = [
+  { label: 'Equipment Setup & Safety', w: 25 },
+  { label: 'Circuit Construction', w: 25 },
+  { label: 'Measurement Technique', w: 20 },
+  { label: 'Data Recording & Results', w: 20 },
+  { label: 'Teamwork & Attitude', w: 10 }
+];
+const MP_KN = [
+  { label: 'Theoretical Understanding', w: 15 },
+  { label: 'Problem Analysis', w: 25 },
+  { label: 'Solution Proposal', w: 25 },
+  { label: 'Discussion Quality', w: 15 },
+  { label: 'Conclusion', w: 20 }
+];
+
+function loadMpPelajar() {
+  const idx = parseInt(document.getElementById('sel-pelajar-mp').value);
+  if (isNaN(idx)) return;
+  const db = getDB();
+  const saved = (db.markahMp && db.markahMp[idx]) || {};
+  let html = `<div class="rubrik-section"><h3>Bahagian 1 — Practical Skill (Wajaran Akhir: 35%)</h3>`;
+  MP_PS.forEach((k, ki) => {
+    const val = saved.ps && saved.ps[ki] !== undefined ? saved.ps[ki] : '';
+    html += `<div class="kriteria-row">
+      <span class="kriteria-label">${k.label}</span>
+      <span class="kriteria-wt">W = ${k.w}%</span>
+      <div class="kriteria-input">
+        <input type="number" id="mp-ps-${ki}" min="1" max="5" step="0.1" value="${val}" placeholder="–" oninput="kiraMpSubtotal()">
+        <span class="max">/5</span>
+      </div>
+    </div>`;
+  });
+  html += `<div class="subtotal-bar"><span class="label">Practical Skill Jumlah (35%)</span><span class="value" id="mp-sub-ps">–</span></div></div>`;
+
+  html += `<div class="rubrik-section"><h3>Bahagian 2 — Knowledge (Wajaran Akhir: 5%)</h3>`;
+  MP_KN.forEach((k, ki) => {
+    const val = saved.kn && saved.kn[ki] !== undefined ? saved.kn[ki] : '';
+    html += `<div class="kriteria-row">
+      <span class="kriteria-label">${k.label}</span>
+      <span class="kriteria-wt">W = ${k.w}%</span>
+      <div class="kriteria-input">
+        <input type="number" id="mp-kn-${ki}" min="1" max="5" step="0.1" value="${val}" placeholder="–" oninput="kiraMpSubtotal()">
+        <span class="max">/5</span>
+      </div>
+    </div>`;
+  });
+  html += `<div class="subtotal-bar"><span class="label">Knowledge Jumlah (5%)</span><span class="value" id="mp-sub-kn">–</span></div></div>`;
+  html += `<div class="subtotal-bar" style="background:#EDE9FE;border-color:#C4B5FD;"><span class="label" style="color:#5B21B6;font-size:14px;font-weight:800;">JUMLAH MINI PROJECT (40%)</span><span class="value" style="color:#5B21B6;font-size:22px;" id="mp-sub-total">–</span></div>`;
+
+  document.getElementById('mp-forms').innerHTML = html;
+  kiraMpSubtotal();
+}
+
+function kiraMpSubtotal() {
+  let ps = 0, kn = 0;
+  MP_PS.forEach((k, ki) => { const el = document.getElementById(`mp-ps-${ki}`); if (el) { const v = parseFloat(el.value); if (!isNaN(v)) ps += (v/5)*k.w; }});
+  MP_KN.forEach((k, ki) => { const el = document.getElementById(`mp-kn-${ki}`); if (el) { const v = parseFloat(el.value); if (!isNaN(v)) kn += (v/5)*k.w; }});
+  const psScore = (ps * 35 / 100);
+  const knScore = (kn * 5 / 100);
+  const total = psScore + knScore;
+  const psEl = document.getElementById('mp-sub-ps'); if (psEl) psEl.textContent = ps > 0 ? psScore.toFixed(2) : '–';
+  const knEl = document.getElementById('mp-sub-kn'); if (knEl) knEl.textContent = kn > 0 ? knScore.toFixed(2) : '–';
+  const totEl = document.getElementById('mp-sub-total'); if (totEl) totEl.textContent = (ps > 0 || kn > 0) ? total.toFixed(2) : '–';
+}
+
+function simpanMarkahMp() {
+  const idx = parseInt(document.getElementById('sel-pelajar-mp').value);
+  if (isNaN(idx)) return;
+  const db = getDB();
+  if (!db.markahMp) db.markahMp = {};
+  db.markahMp[idx] = { ps: {}, kn: {} };
+  MP_PS.forEach((k, ki) => { const el = document.getElementById(`mp-ps-${ki}`); db.markahMp[idx].ps[ki] = el ? parseFloat(el.value) || null : null; });
+  MP_KN.forEach((k, ki) => { const el = document.getElementById(`mp-kn-${ki}`); db.markahMp[idx].kn[ki] = el ? parseFloat(el.value) || null : null; });
+  saveDB(db);
+  showStatus('status-mp');
+}
+
+// ============================================================
+// TEST
+// ============================================================
+// Test config: label, max markah
+const TEST_CONFIG = [
+  { label: 'Test 1', max: 20 },
+  { label: 'Test 2', max: 5  },
+  { label: 'Test 3', max: 10 },
+  { label: 'Test 4', max: 10 }
+];
+
+function loadTestPelajar() {
+  const idx = parseInt(document.getElementById('sel-pelajar-test').value);
+  if (isNaN(idx)) return;
+  const db = getDB();
+  const saved = (db.markahTest && db.markahTest[idx]) || {};
+  let html = `<div class="rubrik-section"><h3>Markah Test</h3>`;
+  TEST_CONFIG.forEach((t, ti) => {
+    const val = saved[ti] !== undefined && saved[ti] !== null ? saved[ti] : '';
+    html += `<div class="kriteria-row">
+      <span class="kriteria-label">${t.label}</span>
+      <span class="kriteria-wt">Markah penuh: ${t.max}</span>
+      <div class="kriteria-input">
+        <input type="number" id="test-${ti}" min="0" max="${t.max}" step="0.5" value="${val}" placeholder="–" oninput="kiraTestSubtotal()">
+        <span class="max">/ ${t.max}</span>
+      </div>
+    </div>`;
+  });
+  html += `<div class="subtotal-bar"><span class="label">Jumlah Test (15%) = T1/20 + T2/5 + T3/10 + T4/10 ÷ 4 × 15</span><span class="value" id="test-sub-total">–</span></div></div>`;
+  document.getElementById('test-forms').innerHTML = html;
+  kiraTestSubtotal();
+}
+
+function kiraTestSubtotal() {
+  // Setiap test dinormalisasi ke /1, kemudian purata × 15
+  const ratios = TEST_CONFIG.map((t, ti) => {
+    const el = document.getElementById('test-' + ti);
+    if (!el || el.value === '') return null;
+    return parseFloat(el.value) / t.max;
+  });
+  const filled = ratios.filter(v => v !== null);
+  const el = document.getElementById('test-sub-total');
+  if (el) {
+    if (filled.length > 0) {
+      const weighted = (filled.reduce((a,b)=>a+b,0) / filled.length) * 15;
+      el.textContent = weighted.toFixed(2) + ' / 15';
+    } else {
+      el.textContent = '–';
+    }
+  }
+}
+
+function simpanMarkahTest() {
+  const idx = parseInt(document.getElementById('sel-pelajar-test').value);
+  if (isNaN(idx)) return;
+  const db = getDB();
+  if (!db.markahTest) db.markahTest = {};
+  db.markahTest[idx] = {};
+  [0,1,2,3].forEach(ti => { const el = document.getElementById('test-'+ti); db.markahTest[idx][ti] = el && el.value !== '' ? parseFloat(el.value) : null; });
+  saveDB(db);
+  showStatus('status-test');
+}
+
+// ============================================================
+// GENERIC SKILLS
+// ============================================================
+function loadGsPelajar() {
+  const idx = parseInt(document.getElementById('sel-pelajar-gs').value);
+  if (isNaN(idx)) return;
+  const db = getDB();
+  const saved = (db.markahGs && db.markahGs[idx]) || {};
+  let html = `<div class="rubrik-section"><h3>Generic Skills 1 (GS1)</h3>`;
+  html += `<div class="kriteria-row">
+    <span class="kriteria-label">Jumlah GS1</span>
+    <span class="kriteria-wt">Skala /5</span>
+    <div class="kriteria-input">
+      <input type="number" id="gs1" min="0" max="5" step="0.1" value="${saved.gs1 !== null && saved.gs1 !== undefined ? saved.gs1 : ''}" placeholder="–" oninput="kiraGsSubtotal()">
+      <span class="max">/5</span>
+    </div>
+  </div></div>`;
+  html += `<div class="rubrik-section"><h3>Generic Skills 2 (GS2)</h3>`;
+  html += `<div class="kriteria-row">
+    <span class="kriteria-label">Jumlah GS2</span>
+    <span class="kriteria-wt">Skala /5</span>
+    <div class="kriteria-input">
+      <input type="number" id="gs2" min="0" max="5" step="0.1" value="${saved.gs2 !== null && saved.gs2 !== undefined ? saved.gs2 : ''}" placeholder="–" oninput="kiraGsSubtotal()">
+      <span class="max">/5</span>
+    </div>
+  </div></div>`;
+  html += `<div class="subtotal-bar" style="background:#FEF3C7;border-color:#FCD34D;">
+    <span class="label" style="color:#92400E;font-weight:800;">MARKAH DIAMBIL = nilai GS tertinggi antara GS1 dan GS2 (/5) × 5%</span>
+    <span class="value" style="color:#92400E;" id="gs-sub-total">–</span>
+  </div>
+  <div style="font-size:12px;color:#57606a;margin-top:8px;padding:8px 12px;background:#FFFBEB;border-radius:6px;" id="gs-compare-label"></div>`;
+  document.getElementById('gs-forms').innerHTML = html;
+  kiraGsSubtotal();
+}
+
+function kiraGsSubtotal() {
+  const gs1 = parseFloat((document.getElementById('gs1')||{}).value);
+  const gs2 = parseFloat((document.getElementById('gs2')||{}).value);
+  const el = document.getElementById('gs-sub-total');
+  const lbl = document.getElementById('gs-compare-label');
+  const gs1Ok = !isNaN(gs1);
+  const gs2Ok = !isNaN(gs2);
+  if (gs1Ok || gs2Ok) {
+    const mx = Math.max(gs1Ok ? gs1 : -Infinity, gs2Ok ? gs2 : -Infinity);
+    const weighted = (mx / 5) * 5;
+    if (el) el.textContent = weighted.toFixed(2) + ' / 5';
+    if (lbl) {
+      if (gs1Ok && gs2Ok) {
+        const winner = gs1 >= gs2 ? 'GS1' : 'GS2';
+        lbl.textContent = `Perbandingan: GS1 = ${gs1.toFixed(1)}  |  GS2 = ${gs2.toFixed(1)}  →  ${winner} lebih tinggi, diambil: ${mx.toFixed(1)}`;
+      } else {
+        lbl.textContent = gs1Ok ? `Hanya GS1 diisi: ${gs1.toFixed(1)}` : `Hanya GS2 diisi: ${gs2.toFixed(1)}`;
+      }
+    }
+  } else {
+    if (el) el.textContent = '–';
+    if (lbl) lbl.textContent = '';
+  }
+}
+
+function simpanMarkahGs() {
+  const idx = parseInt(document.getElementById('sel-pelajar-gs').value);
+  if (isNaN(idx)) return;
+  const db = getDB();
+  if (!db.markahGs) db.markahGs = {};
+  const gs1El = document.getElementById('gs1');
+  const gs2El = document.getElementById('gs2');
+  db.markahGs[idx] = {
+    gs1: gs1El && gs1El.value !== '' ? parseFloat(gs1El.value) : null,
+    gs2: gs2El && gs2El.value !== '' ? parseFloat(gs2El.value) : null
+  };
+  saveDB(db);
+  showStatus('status-gs');
+}
+
+// ============================================================
+// KEPUTUSAN
+// ============================================================
+function kiraJumlahPelajar(idx, db) {
+  let pw = null, test = null, mp = null, gs = null;
+
+  // PW
+  if (db.markahPw && db.markahPw[idx]) {
+    const pwVals = PW_RUBRIK.map((pw, pi) => {
+      const kriteria = db.markahPw[idx][pi];
+      if (!kriteria) return null;
+      let total = 0; let ada = false;
+      pw.kriteria.forEach((k, ki) => { if (kriteria[ki] !== null && kriteria[ki] !== undefined) { total += (kriteria[ki]/5)*k.w; ada = true; } });
+      return ada ? total : null;
+    }).filter(v => v !== null);
+    if (pwVals.length > 0) pw = pwVals.reduce((a,b)=>a+b,0) / pwVals.length / 100 * 40;
+  }
+
+  // Test — setiap test dinormalisasi ke /1 (T1/20, T2/5, T3/10, T4/10), kemudian purata × 15
+  if (db.markahTest && db.markahTest[idx]) {
+    const ratios = TEST_CONFIG.map((t, ti) => {
+      const v = db.markahTest[idx][ti];
+      return (v !== null && v !== undefined) ? v / t.max : null;
+    }).filter(v => v !== null);
+    if (ratios.length > 0) test = (ratios.reduce((a,b)=>a+b,0) / ratios.length) * 15;
+  }
+
+  // Mini Project
+  if (db.markahMp && db.markahMp[idx]) {
+    const saved = db.markahMp[idx];
+    let ps = 0, kn = 0, psAda = false, knAda = false;
+    MP_PS.forEach((k, ki) => { if (saved.ps && saved.ps[ki] !== null && saved.ps[ki] !== undefined) { ps += (saved.ps[ki]/5)*k.w; psAda = true; }});
+    MP_KN.forEach((k, ki) => { if (saved.kn && saved.kn[ki] !== null && saved.kn[ki] !== undefined) { kn += (saved.kn[ki]/5)*k.w; knAda = true; }});
+    if (psAda || knAda) mp = (ps*35/100) + (kn*5/100);
+  }
+
+  // GS
+  if (db.markahGs && db.markahGs[idx]) {
+    const g = db.markahGs[idx];
+    const vals = [g.gs1, g.gs2].filter(v => v !== null && v !== undefined);
+    if (vals.length > 0) gs = Math.max(...vals) / 5 * 5;
+  }
+
+  const jumlah = (pw||0) + (test||0) + (mp||0) + (gs||0);
+  return { pw, test, mp, gs, jumlah };
+}
+
+function getGred(j) {
+  if (j >= 90) return { g: 'A+', cls: 'gred-a' };
+  if (j >= 80) return { g: 'A',  cls: 'gred-a' };
+  if (j >= 75) return { g: 'A-', cls: 'gred-a' };
+  if (j >= 70) return { g: 'B+', cls: 'gred-b' };
+  if (j >= 65) return { g: 'B',  cls: 'gred-b' };
+  if (j >= 60) return { g: 'B-', cls: 'gred-b' };
+  if (j >= 55) return { g: 'C+', cls: 'gred-c' };
+  if (j >= 50) return { g: 'C',  cls: 'gred-c' };
+  if (j >= 45) return { g: 'C-', cls: 'gred-c' };
+  if (j >= 40) return { g: 'D',  cls: 'gred-d' };
+  return { g: 'E', cls: 'gred-e' };
+}
+
+function janaSemula() {
+  const db = getDB();
+  const pelajar = db.pelajar || [];
+  let tbody = '';
+  let jumlahAll = [], lulusCount = 0, gagalCount = 0;
+
+  pelajar.forEach((p, idx) => {
+    const m = kiraJumlahPelajar(idx, db);
+    const j = m.jumlah;
+    const lulus = j >= 40;
+    if (j > 0) jumlahAll.push(j);
+    if (j > 0 && lulus) lulusCount++;
+    if (j > 0 && !lulus) gagalCount++;
+    const gred = getGred(j);
+    const statusBadge = j === 0 ? '<span style="color:#9ca3af;font-size:12px;">–</span>' : lulus ? '<span class="badge-lulus">LULUS</span>' : '<span class="badge-gagal">GAGAL</span>';
+    const gredBadge = j === 0 ? '<span class="badge-gred gred-x">–</span>' : `<span class="badge-gred ${gred.cls}">${gred.g}</span>`;
+    const progW = Math.min(j, 100);
+    const progCls = lulus ? '' : 'fail';
+    tbody += `<tr>
+      <td>${idx+1}</td>
+      <td class="nama-col">${p.nama || '–'}</td>
+      <td style="font-family:monospace;font-size:12px">${p.pend || '–'}</td>
+      <td>${m.pw !== null ? m.pw.toFixed(2) : '–'}</td>
+      <td>${m.test !== null ? m.test.toFixed(2) : '–'}</td>
+      <td>${m.mp !== null ? m.mp.toFixed(2) : '–'}</td>
+      <td>${m.gs !== null ? m.gs.toFixed(2) : '–'}</td>
+      <td class="jumlah-col">
+        ${j > 0 ? j.toFixed(2)+'%' : '–'}
+        ${j > 0 ? `<div class="progress-wrap"><div class="progress-bar ${progCls}" style="width:${progW}%"></div></div>` : ''}
+      </td>
+      <td>${gredBadge}</td>
+      <td>${statusBadge}</td>
+    </tr>`;
+  });
+
+  document.getElementById('keputusan-tbody').innerHTML = tbody || '<tr><td colspan="10" style="text-align:center;color:#9ca3af;padding:20px;">Tiada data. Sila isi senarai pelajar dahulu.</td></tr>';
+
+  // Stat boxes
+  const avg = jumlahAll.length ? (jumlahAll.reduce((a,b)=>a+b,0)/jumlahAll.length).toFixed(1) : '–';
+  const maks = jumlahAll.length ? Math.max(...jumlahAll).toFixed(1) : '–';
+  const min = jumlahAll.length ? Math.min(...jumlahAll).toFixed(1) : '–';
+  document.getElementById('stat-boxes').innerHTML = `
+    <div class="stat-box"><div class="stat-label">Jumlah Pelajar</div><div class="stat-value">${pelajar.length}</div><div class="stat-sub">pelajar berdaftar</div></div>
+    <div class="stat-box lulus"><div class="stat-label">Lulus</div><div class="stat-value">${lulusCount}</div><div class="stat-sub">≥ 40%</div></div>
+    <div class="stat-box gagal"><div class="stat-label">Gagal</div><div class="stat-value">${gagalCount}</div><div class="stat-sub">< 40%</div></div>
+    <div class="stat-box"><div class="stat-label">Purata Kelas</div><div class="stat-value">${avg}${avg!=='–'?'%':''}</div><div class="stat-sub">markah purata</div></div>
+    <div class="stat-box"><div class="stat-label">Markah Tertinggi</div><div class="stat-value">${maks}${maks!=='–'?'%':''}</div></div>
+    <div class="stat-box"><div class="stat-label">Markah Terendah</div><div class="stat-value">${min}${min!=='–'?'%':''}</div></div>`;
+
+  const k = db.kelas || {};
+  document.getElementById('keputusan-subtitle').textContent = [k.nama, k.kursus, k.semester].filter(Boolean).join(' | ') || 'Ringkasan markah semua pelajar';
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+// ============================================================
+// RESET FUNCTIONS
+// ============================================================
+function resetNamaPelajar() {
+  if (!confirm('⚠️ Reset semua NAMA PELAJAR sahaja?\n\nMarkah akan dikekalkan. Sesuai untuk guna semula jadual dengan kelas baru.')) return;
+  const db = getDB();
+  const bil = (db.kelas && db.kelas.bilPelajar) || 36;
+  db.pelajar = [];
+  for (let i = 0; i < bil; i++) {
+    db.pelajar.push({ nama: '', pend: '', kump: '', kumpMp: '' });
+  }
+  saveDB(db);
+  binarBarisPelajar(bil);
+  showPage('pelajar');
+  setTimeout(() => alert('✅ Nama pelajar telah dipadamkan.\nMarkah masih dikekalkan.'), 100);
+}
+
+function resetSemua() {
+  if (!confirm('⚠️ AMARAN: Reset SEMUA DATA termasuk nama pelajar dan semua markah?\n\nTindakan ini tidak boleh dibatalkan!')) return;
+  if (!confirm('Adakah anda pasti? Semua data akan dipadam terus.')) return;
+  localStorage.removeItem(DB_KEY);
+  // Reset form fields
+  ['f-pensyarah','f-kursus','f-kelas','f-semester'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('f-bilpelajar').value = '36';
+  binarBarisPelajar(36);
+  updateTopbar();
+  showPage('kelas');
+  setTimeout(() => alert('✅ Semua data telah dipadamkan.\nSedia untuk semester baru!'), 100);
+}
+
+function showStatus(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'inline';
+  setTimeout(() => { el.style.display = 'none'; }, 2500);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+(function init() {
+  const db = getDB();
+
+  // Muat maklumat kelas
+  if (db.kelas) {
+    const k = db.kelas;
+    document.getElementById('f-pensyarah').value = k.pensyarah || '';
+    document.getElementById('f-kursus').value    = k.kursus    || '';
+    document.getElementById('f-kelas').value     = k.nama      || '';
+    document.getElementById('f-semester').value  = k.semester  || '';
+    if (k.bilPelajar) document.getElementById('f-bilpelajar').value = k.bilPelajar;
+  }
+
+  binarBarisPelajar();
+  updateTopbar();
+})();
 </script>
 </body>
 </html>
